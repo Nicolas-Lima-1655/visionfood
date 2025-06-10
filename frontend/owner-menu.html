@@ -1,0 +1,47 @@
+<!DOCTYPE html><html lang="pt-BR">
+<head>
+  <meta charset="UTF-8"><title>Cardápio</title>
+  <link rel="stylesheet" href="assets/css/style.css">
+  <script type="module">
+    document.addEventListener('DOMContentLoaded',()=>{
+      const code = new URLSearchParams(location.search).get('code');
+      document.getElementById('rest-info').innerText=`Código: ${code}`;
+      document.getElementById('item-form').onsubmit=async e=>{
+        e.preventDefault();
+        const payload={
+          restaurantCode:code,
+          name:document.getElementById('item-name').value,
+          description:document.getElementById('item-description').value,
+          price:parseFloat(document.getElementById('item-price').value),
+          category:document.getElementById('item-category').value,
+          imageUrl:document.getElementById('item-image').value
+        };
+        const res=await fetch('http://localhost:3000/api/menu',{
+          method:'POST',headers:{'Content-Type':'application/json'},
+          body:JSON.stringify(payload)
+        });
+        const item=await res.json();
+        if(res.ok){
+          const li=document.createElement('li');
+          li.textContent=`${item.name} – R$ ${item.price.toFixed(2)} (${item.category})`;
+          document.getElementById('item-list').append(li);
+          e.target.reset();
+        } else { alert(item.message); }
+      };
+    });
+  </script>
+</head>
+<body class="centered">
+  <h1>Gerenciar Cardápio</h1>
+  <p id="rest-info"></p>
+  <form id="item-form">
+    <input id="item-name" placeholder="Nome" required>
+    <textarea id="item-description" placeholder="Descrição"></textarea>
+    <input id="item-price" type="number" step="0.01" placeholder="Preço" required>
+    <input id="item-category" placeholder="Categoria" required>
+    <input id="item-image" placeholder="URL da imagem">
+    <button type="submit">Adicionar</button>
+  </form>
+  <ul id="item-list"></ul>
+</body>
+</html>

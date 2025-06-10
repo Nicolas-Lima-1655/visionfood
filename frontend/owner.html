@@ -1,0 +1,39 @@
+<!DOCTYPE html><html lang="pt-BR">
+<head>
+  <meta charset="UTF-8"><title>Novo Restaurante</title>
+  <link rel="stylesheet" href="assets/css/style.css">
+  <script type="module">
+    document.addEventListener('DOMContentLoaded',()=>{
+      document.getElementById('restaurant-form').onsubmit=async e=>{
+        e.preventDefault();
+        const payload={
+          name:document.getElementById('name').value,
+          description:document.getElementById('description').value,
+          address:document.getElementById('address').value
+        };
+        const res=await fetch('http://localhost:3000/api/restaurant',{
+          method:'POST',headers:{'Content-Type':'application/json'},
+          body:JSON.stringify(payload)
+        });
+        const data=await res.json();
+        if(res.ok){
+          document.getElementById('result').innerHTML=
+            `Código gerado: <b>${data.code}</b><br>
+             <a href="owner-menu.html?code=${data.code}">Gerenciar Cardápio</a>`;
+          e.target.reset();
+        }else{ alert(data.message); }
+      };
+    });
+  </script>
+</head>
+<body class="centered">
+  <h1>Cadastro de Restaurante</h1>
+  <form id="restaurant-form">
+    <input id="name" placeholder="Nome" required>
+    <textarea id="description" placeholder="Descrição"></textarea>
+    <input id="address" placeholder="Endereço" required>
+    <button type="submit">Cadastrar</button>
+  </form>
+  <div id="result"></div>
+</body>
+</html>

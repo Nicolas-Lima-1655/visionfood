@@ -1,0 +1,30 @@
+<!DOCTYPE html><html lang="pt-BR">
+<head>
+  <meta charset="UTF-8"><title>Carrinho</title>
+  <link rel="stylesheet" href="assets/css/style.css">
+  <script type="module">
+    import { getCart, renderCart } from './assets/js/app.js';
+    document.addEventListener('DOMContentLoaded',()=>{
+      const params=new URLSearchParams(location.search);
+      const code  =params.get('code');
+      renderCart();
+      document.getElementById('send-order').onclick=async()=>{
+        const payload={ restaurantCode:code, items:getCart() };
+        const res=await fetch('http://localhost:3000/api/order',{
+          method:'POST',headers:{'Content-Type':'application/json'},
+          body:JSON.stringify(payload)
+        });
+        const data=await res.json();
+        if(res.ok) location=`sucesso.html?orderId=${data.orderId}`;
+        else alert(data.message);
+      };
+    });
+  </script>
+</head>
+<body>
+  <h2>Seu Pedido</h2>
+  <div id="cart-items"></div>
+  <p id="total"></p>
+  <button id="send-order">Finalizar Pedido</button>
+</body>
+</html>

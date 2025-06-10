@@ -1,0 +1,53 @@
+<!DOCTYPE html><html lang="pt-BR">
+<head>
+  <meta charset="UTF-8"><title>Cardápio</title>
+  <link rel="stylesheet" href="assets/css/style.css">
+  <script type="module">
+    import { addToCart } from './assets/js/app.js';
+    const params = new URLSearchParams(location.search);
+    const code   = params.get('code');
+
+    const catButtons = ['Entradas','Carnes','Sobremesas'];
+    document.addEventListener('DOMContentLoaded',()=>{
+      const nav=document.createElement('nav');
+      catButtons.forEach(cat=>{
+        const b=document.createElement('button');
+        b.textContent=cat;
+        b.onclick=()=>loadMenu(cat);
+        nav.append(b);
+      });
+      document.body.prepend(nav);
+      loadMenu('Entradas');
+      document.getElementById('view-cart').onclick=()=>{
+        location=`carrinho.html?code=${code}`;
+      };
+    });
+
+    async function loadMenu(cat){
+      const res = await fetch(`http://localhost:3000/api/menu?code=${code}&category=${cat}`);
+      const list= await res.json();
+      const box = document.getElementById('items');
+      box.innerHTML='';
+      list.forEach(i=>{
+        const div=document.createElement('div');
+        div.className='item-card';
+        div.innerHTML=`
+          <img src="${i.imageUrl||'https://via.placeholder.com/90'}" alt="">
+          <div>
+            <h3>${i.name}</h3>
+            <p>${i.description||''}</p>
+            <p>R$ ${i.price.toFixed(2)}</p>
+          </div>
+          <button>+</button>`;
+        div.querySelector('button').onclick=()=>addToCart(i);
+        box.append(div);
+      });
+    }
+  </script>
+</head>
+<body>
+  <h2>Cardápio</h2>
+  <div id="items"></div>
+  <button id="view-cart">Ver Carrinho</button>
+</body>
+</html>

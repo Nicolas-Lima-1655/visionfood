@@ -1,0 +1,20 @@
+<!DOCTYPE html><html lang="pt-BR">
+<head>
+  <meta charset="UTF-8"><title>VisionFood</title>
+  <link rel="stylesheet" href="assets/css/style.css">
+  <script type="module">
+    document.addEventListener('DOMContentLoaded',()=>{
+      document.getElementById('go').onclick=()=>{
+        const code=document.getElementById('code').value.trim();
+        if(!code)return alert('Informe o código!');
+        location=`menu.html?code=${code}`;
+      };
+    });
+  </script>
+</head>
+<body class="centered">
+  <h1>VisionFood</h1>
+  <input id="code" placeholder="Código do restaurante">
+  <button id="go">Prosseguir</button>
+</body>
+</html>
